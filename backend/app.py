@@ -9,10 +9,11 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
-    uploaded_file = request.files['file']
-    df = pd.read_csv(uploaded_file)
-    data = df.to_dict(orient='records')
-    #if uploaded_file.filename != '':
+    uploaded_file = request.files.get('file')
+    if uploaded_file:
+        df = pd.read_csv(uploaded_file)
+        data = df.to_dict(orient='records')
+        return jsonify({'archivo': data}), 200
     #    is_valid, message = validate_csv(uploaded_file)
     #    if not is_valid:
     #        return jsonify({'error': message}), 400
@@ -23,9 +24,8 @@ def upload_file():
     #        #df_kmeas = kmeans(normalized_data, optimal_clusters, df)
     #
     #        return jsonify({'mensaje': 'Todo melo'})
-    #else:
-    #    return jsonify({'error': 'No se seleccionó ningún archivo'}), 400
-    return jsonify({'archivo': data}), 200
+    else:
+        return jsonify({'error': 'No se seleccionó ningún archivo'}), 400
 
 if __name__ == '__main__':
     app.run(debug=True)

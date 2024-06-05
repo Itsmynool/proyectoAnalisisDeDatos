@@ -42,7 +42,7 @@ function App() {
         </Toggable>
       </div>
 
-      <FileForm sendFile={sendFile}/>
+      <FileForm sendFile={sendFile} />
     </div>
   );
 }
