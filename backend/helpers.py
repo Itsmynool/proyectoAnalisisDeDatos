@@ -13,25 +13,39 @@ def validate_csv(file):
         required_columns = ['BALANCE', 'PURCHASES', 'CREDIT_LIMIT', 'PAYMENTS', 'PURCHASES_FREQUENCY', 'TENURE']
 
         if not set(required_columns).issubset(df.columns):
-            return False, 'El archivo CSV debe contener las columnas requeridas: columna1, columna2, columna3.'
+            return False, 'El archivo CSV no contiene las columnas requeridas'
         
         return True, 'El archivo CSV es válido.'
     except Exception as e:
         return False, f'Error al validar el archivo CSV: {str(e)}'
     
 def preprocessing(file):
+    #print('FILE: ', file)
+    file.seek(0) 
     df = pd.read_csv(file)
+    #print(df.dtypes)
+    
+    #print('LEE DATASET')
 
-    df.fillna(df.mean(), inplace=True)
+    df_head = df.head(5)
+
+    #print('5 PRIMEROS DF')
 
     selected_columns = ['BALANCE', 'PURCHASES', 'CREDIT_LIMIT', 'PAYMENTS', 'PURCHASES_FREQUENCY', 'TENURE']
+    #print('SELECCIONA COLUNAS')
     data = df[selected_columns]
+    #print('SEPARA DATA')
+    data.fillna(data.mean(), inplace=True)
+    #print('LLENA NULOS')
     data_head = data.head(5)
+    #print('5 PRIMEROS DATA')
 
     scaler = StandardScaler()
+    #print('SCALER')
     normalized_data = scaler.fit_transform(data)
+    #print('NORMALIZA')
 
-    return df, data_head, normalized_data
+    return df_head, data_head, normalized_data
 
 def generate_plots_and_optimal_clusters(normalized_data):
     # Generar el gráfico del codo
