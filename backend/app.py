@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request
-from helpers import validate_csv, preprocessing, generate_plots_and_optimal_clusters, kmeans
+from helpers import validate_csv, preprocessing, pcaOne, elbowGraph, silhouetteScore, kmeans, pca_kmeans
 from flask_cors import CORS
 
 import pandas as pd
@@ -18,20 +18,27 @@ def upload_file():
             return jsonify({'error': message}), 400
          
         else:
-            #print('UPLOADED FILE: ', uploaded_file.filename)
-            df_head, data_head, normalized_data = preprocessing(uploaded_file)
-            #elbow_img, silhouette_img, optimal_clusters = generate_plots_and_optimal_clusters(normalized_data)
-            #df_kmeas = kmeans(normalized_data, optimal_clusters, df)\\
-            df_head.fillna(-1, inplace=True)
-            object_columns = df_head.select_dtypes(include=['object']).columns
-            for col in object_columns:
-                df_head[col] = pd.factorize(df_head[col])[0]
+            try:
+                normalized_data = preprocessing(uploaded_file)
+                #print('Normaliza')
+                pcaImg = pcaOne(normalized_data)
+                #print('PCA UNO')
+                elbowImg = elbowGraph(normalized_data)
+                #print('Eblow')
+                silhouetteImg, optimalClusters = silhouetteScore(normalized_data)
+                #print('Silhouette')
+                data, clusters = kmeans(normalized_data, optimalClusters, uploaded_file)
+                #print('Kmeans')
+                pcaClusterImg = pca_kmeans(normalized_data, clusters)
+                #print('PCA DOS}')
 
-            print(df_head.dtypes)
-            print('------------------------------------------------')
-            print(data_head.dtypes)
-    
-            return jsonify({'df_head': df_head.to_dict(orient='records')}), 200
+                return jsonify({'pcaImg': pcaImg, 'elbowImg': elbowImg, 'silhouetteImg': silhouetteImg,'optimalClusters': optimalClusters, 'data': data, 'pcaClusterImg': pcaClusterImg}), 200
+            
+            except pd.errors.ParserError:
+                return jsonify({"error": "Error al analizar el archivo CSV"}), 400
+            
+            except Exception as e:
+                return jsonify({"error": str(e)}), 500
     else:
         return jsonify({'error': 'No se seleccionó ningún archivo'}), 400
 

@@ -4,6 +4,7 @@ import ButtonOnClick from "./ButtonOnClick"
 
 const FileForm = forwardRef(({sendFile}, ref) => {
     const [file, setFile] = useState(null)
+    const [isDisabled, setIsDisabled] = useState(false);
 
     const fileInputRef = useRef(null);
 
@@ -21,7 +22,8 @@ const FileForm = forwardRef(({sendFile}, ref) => {
 
     useImperativeHandle(ref, () => {
         return {
-            removeFile
+            removeFile,
+            setIsDisabled
         }
     })
 
@@ -36,7 +38,12 @@ const FileForm = forwardRef(({sendFile}, ref) => {
             {file && (
                 <div>
                     <p> {file.name} </p>
-                    <ButtonOnClick text='Eliminar' onClick={removeFile} />
+                    <ButtonOnClick text='Eliminar' onClick={removeFile} disabled={isDisabled} />
+                </div>
+            )}
+            {isDisabled && (
+                <div>
+                    Cargando...
                 </div>
             )}
         </div>

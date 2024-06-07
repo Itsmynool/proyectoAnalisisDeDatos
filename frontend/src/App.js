@@ -5,16 +5,16 @@ import FileForm from './components/FileForm';
 import Notification from './components/Notification'
 import Toggable from './components/Toggable';
 import Requeriments from './components/Requeriments';
-import Table from './components/Table';
+import Clustering from './components/Clustering';
 
 import fileService from './services/file'
 
 function App() {
-  const [dfHead, setDfHead] = useState(null)
 
   const [information, setInformation] = useState({success: null, error: null})
 
   const fileFormRef = useRef()
+  const clusteringRef = useRef()
 
   const showMessage = (success, error) => {
     setInformation({success: success, error: error})
@@ -25,15 +25,24 @@ function App() {
 
   const sendFile = async (file) => {
     try{
+      fileFormRef.current.setIsDisabled(true)
       const formData = new FormData();
       formData.append('file', file);
       const response = await fileService.sendFile(formData)
-      setDfHead(response.df_head)
+      clusteringRef.current.setData(response.csv_data)
+      clusteringRef.current.setPcaImg(response.pcaImg)
+      clusteringRef.current.setSilhouetteImg(response.silhouetteImg)
+      clusteringRef.current.setElbowImg(response.elbowImg)
+      clusteringRef.current.setOptimalClusters(response.optimalClusters)
+      clusteringRef.current.setPcaClusterImg(response.pcaClusterImg)
+      clusteringRef.current.setAnalysisCompleted(true)
       console.log('RESPONSE: ', response);
     } catch (exception) {
       showMessage(null, exception.response.data.error)
       console.log(exception.response);
       fileFormRef.current.removeFile()
+    } finally {
+      fileFormRef.current.setIsDisabled(false)
     }
   }
 
@@ -52,14 +61,9 @@ function App() {
 
       <FileForm sendFile={sendFile} ref={fileFormRef} />
 
-      {dfHead != null && (
-        <div>
-          <h2>CSV cargados (5 primeros)</h2>
-          <Table
-            data={dfHead}
-          />
-        </div>
-      )}
+        <Clustering
+          ref={clusteringRef}
+        />
 
     </div>
   );
