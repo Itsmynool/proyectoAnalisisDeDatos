@@ -10,6 +10,15 @@ const sendFile = (formData) => {
     return request.then(response => response.data)
 }
 
-const fileService = { sendFile }
+const generateGraph = (data, variableX, variableY) => {
+    const request = axios.post(`${baseUrl}/generate_graph`, {
+        data: data,
+        variableX: variableX,
+        variableY: variableY
+    });
+    return request.then(response => response.data)
+}
+
+const fileService = { sendFile, generateGraph }
 
 export default fileService

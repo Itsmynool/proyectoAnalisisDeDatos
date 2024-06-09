@@ -1,8 +1,8 @@
 import React, { useState, forwardRef, useImperativeHandle } from 'react';
 
-import Table from '../components/Table'
 import ImageSwitcher from './ImageSwitcher';
 import Image from './Image';
+import GraphOptions from './GraphOptions';
 
 const Clustering = forwardRef((props, ref) => {
     const [data, setData] = useState(null)
@@ -12,6 +12,7 @@ const Clustering = forwardRef((props, ref) => {
     const [elbowImg, setElbowImg] = useState(null)
     const [optimalClusters, setOptimalClusters] = useState(null)
     const [pcaClusterImg, setPcaClusterImg] = useState(null)
+    const [graphOptions, setGraphOptions] = useState(null)
 
     useImperativeHandle(ref, () => {
         return {
@@ -21,7 +22,8 @@ const Clustering = forwardRef((props, ref) => {
             setElbowImg,
             setOptimalClusters,
             setPcaImg,
-            setPcaClusterImg
+            setPcaClusterImg,
+            setGraphOptions
         }
     })
 
@@ -42,6 +44,12 @@ const Clustering = forwardRef((props, ref) => {
 
                 <Image
                     imageSrc={pcaClusterImg}
+                />
+
+                <GraphOptions
+                    list={graphOptions}
+                    data={data}
+                    clusters={optimalClusters}
                 />
             </div>
         )}

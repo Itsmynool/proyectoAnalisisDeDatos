@@ -29,12 +29,14 @@ function App() {
       const formData = new FormData();
       formData.append('file', file);
       const response = await fileService.sendFile(formData)
-      clusteringRef.current.setData(response.csv_data)
+      clusteringRef.current.setData(response.data)
       clusteringRef.current.setPcaImg(response.pcaImg)
       clusteringRef.current.setSilhouetteImg(response.silhouetteImg)
       clusteringRef.current.setElbowImg(response.elbowImg)
       clusteringRef.current.setOptimalClusters(response.optimalClusters)
       clusteringRef.current.setPcaClusterImg(response.pcaClusterImg)
+      clusteringRef.current.setGraphOptions(response.columns)
+
       clusteringRef.current.setAnalysisCompleted(true)
       console.log('RESPONSE: ', response);
     } catch (exception) {
@@ -61,9 +63,9 @@ function App() {
 
       <FileForm sendFile={sendFile} ref={fileFormRef} />
 
-        <Clustering
-          ref={clusteringRef}
-        />
+      <Clustering
+        ref={clusteringRef}
+      />
 
     </div>
   );

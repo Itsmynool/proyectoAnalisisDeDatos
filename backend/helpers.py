@@ -14,7 +14,7 @@ import seaborn as sns
 def validate_csv(file):
     try:
         df = pd.read_csv(file)
-        required_columns = ['BALANCE', 'PURCHASES', 'CREDIT_LIMIT', 'PAYMENTS', 'PURCHASES_FREQUENCY', 'TENURE']
+        required_columns = ['BALANCE', 'PURCHASES', 'CREDIT_LIMIT', 'PAYMENTS', 'PURCHASES_FREQUENCY', 'MINIMUM_PAYMENTS', 'TENURE']
 
         if not set(required_columns).issubset(df.columns):
             return False, 'El archivo CSV no contiene las columnas requeridas'
@@ -50,7 +50,7 @@ def preprocessing(file):
     normalized_data = scaler.fit_transform(data)
     #print('NORMALIZA')
 
-    return normalized_data
+    return normalized_data, selected_columns
 
 def pcaOne(normalized_data):
     plt.switch_backend('Agg')
@@ -152,3 +152,34 @@ def pca_kmeans(normalized_data, clusters):
     pca_two = base64.b64encode(pca_kmeans.getvalue()).decode('utf-8')
 
     return pca_two
+
+def generate_graph_image(df, variable1, variable2):
+    plt.switch_backend('Agg')
+    graph = BytesIO()
+    
+    # Crear el gráfico de dispersión
+    scatter = plt.scatter(df[variable1], df[variable2], c=df['Cluster'], cmap='coolwarm', alpha=1, s=100, edgecolor='black')
+    plt.xlabel(variable1)
+    plt.ylabel(variable2)
+    plt.title('Gráfico de dispersión')
+    
+    # Obtener los límites del eje x e y
+    xlim = plt.gca().get_xlim()
+    ylim = plt.gca().get_ylim()
+    
+    # Obtener los colores de los clusters
+    cluster_colors = [scatter.cmap(scatter.norm(cluster)) for cluster in df['Cluster'].unique()]
+    
+    # Agregar la leyenda de clusters en la esquina superior derecha
+    legend_elements = [plt.Line2D([0], [0], marker='o', color='w', label=f'Cluster {cluster}', markersize=10, markerfacecolor=color) for cluster, color in zip(df['Cluster'].unique(), cluster_colors)]
+    plt.legend(handles=legend_elements, loc='upper right')
+
+    # Guardar el gráfico en el buffer de bytes
+    plt.savefig(graph, format='png')
+    plt.close()
+
+    # Convertir el buffer de bytes en una cadena base64
+    graph.seek(0)
+    graph_img = base64.b64encode(graph.getvalue()).decode('utf-8')
+
+    return graph_img
