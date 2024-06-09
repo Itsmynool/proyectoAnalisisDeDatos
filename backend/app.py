@@ -19,7 +19,7 @@ def upload_file():
          
         else:
             try:
-                normalized_data, columns = preprocessing(uploaded_file)
+                normalized_data, columsList, columns = preprocessing(uploaded_file)
                 #print('Normaliza')
                 pcaImg = pcaOne(normalized_data)
                 #print('PCA UNO')
@@ -33,7 +33,7 @@ def upload_file():
                 #print('PCA DOS}')
                 columns.sort()
 
-                return jsonify({'pcaImg': pcaImg, 'elbowImg': elbowImg, 'silhouetteImg': silhouetteImg,'optimalClusters': optimalClusters, 'data': data, 'pcaClusterImg': pcaClusterImg, 'columns': columns}), 200
+                return jsonify({'pcaImg': pcaImg, 'elbowImg': elbowImg, 'silhouetteImg': silhouetteImg,'optimalClusters': optimalClusters, 'data': data, 'pcaClusterImg': pcaClusterImg, 'columns': columns, 'columsList': columsList}), 200
             
             except pd.errors.ParserError:
                 return jsonify({"error": "Error al analizar el archivo CSV"}), 400

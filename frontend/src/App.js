@@ -23,22 +23,27 @@ function App() {
     }, 2000)
   }
 
+  const saveData = (response) => {
+    clusteringRef.current.setData(response.data)
+    clusteringRef.current.setPcaImg(response.pcaImg)
+    clusteringRef.current.setSilhouetteImg(response.silhouetteImg)
+    clusteringRef.current.setElbowImg(response.elbowImg)
+    clusteringRef.current.setOptimalClusters(response.optimalClusters)
+    clusteringRef.current.setPcaClusterImg(response.pcaClusterImg)
+    clusteringRef.current.setGraphOptions(response.columns)
+    clusteringRef.current.setTableGuide(response.columsList)
+
+    clusteringRef.current.setAnalysisCompleted(true)
+  }
+
   const sendFile = async (file) => {
     try{
       fileFormRef.current.setIsDisabled(true)
       const formData = new FormData();
       formData.append('file', file);
       const response = await fileService.sendFile(formData)
-      clusteringRef.current.setData(response.data)
-      clusteringRef.current.setPcaImg(response.pcaImg)
-      clusteringRef.current.setSilhouetteImg(response.silhouetteImg)
-      clusteringRef.current.setElbowImg(response.elbowImg)
-      clusteringRef.current.setOptimalClusters(response.optimalClusters)
-      clusteringRef.current.setPcaClusterImg(response.pcaClusterImg)
-      clusteringRef.current.setGraphOptions(response.columns)
-
-      clusteringRef.current.setAnalysisCompleted(true)
-      console.log('RESPONSE: ', response);
+      //console.log(response.columsList);
+      saveData(response)
     } catch (exception) {
       showMessage(null, exception.response.data.error)
       console.log(exception.response);
@@ -46,6 +51,10 @@ function App() {
     } finally {
       fileFormRef.current.setIsDisabled(false)
     }
+  }
+
+  const deleteData = () => {
+    clusteringRef.current.deleteData()
   }
 
   return (
@@ -61,7 +70,7 @@ function App() {
         </Toggable>
       </div>
 
-      <FileForm sendFile={sendFile} ref={fileFormRef} />
+      <FileForm sendFile={sendFile} deleteData={deleteData} ref={fileFormRef} />
 
       <Clustering
         ref={clusteringRef}

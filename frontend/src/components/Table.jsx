@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useTable, usePagination } from 'react-table';
 
-const Table = ({ data, numberOfClusters }) => {
+const Table = ({ data, numberOfClusters, tableGuide }) => {
   const [selectedCluster, setSelectedCluster] = useState(0);
   const [filteredData, setFilteredData] = useState(data);
 
@@ -9,14 +9,23 @@ const Table = ({ data, numberOfClusters }) => {
     setFilteredData(data.filter(row => row.Cluster === selectedCluster));
   }, [selectedCluster, data]);
 
-  const columns = React.useMemo(
-    () =>
-      Object.keys(data[0]).map(key => ({
-        Header: key,
-        accessor: key,
-      })),
-    [data]
-  );
+  const columns = useMemo(() => {
+    if (!data || data.length === 0) return [];
+
+    // Map tableGuide to columns, excluding 'Cluster'
+    const tableColumns = tableGuide.map(key => ({
+      Header: key,
+      accessor: key,
+    }));
+
+    // Optional: To include the Cluster column uncomment the lines below
+    // tableColumns.push({
+    //   Header: 'Cluster',
+    //   accessor: 'Cluster',
+    // });
+
+    return tableColumns;
+  }, [data, tableGuide]);
 
   const {
     getTableProps,
@@ -37,7 +46,7 @@ const Table = ({ data, numberOfClusters }) => {
     {
       columns,
       data: filteredData,
-      initialState: { pageIndex: 0 }, // Initial page index
+      initialState: { pageIndex: 0 },
     },
     usePagination
   );
@@ -62,9 +71,11 @@ const Table = ({ data, numberOfClusters }) => {
         <table {...getTableProps()} style={{ width: '100%' }}>
           <thead>
             {headerGroups.map(headerGroup => (
-              <tr {...headerGroup.getHeaderGroupProps()}>
+              <tr {...headerGroup.getHeaderGroupProps()} key={headerGroup.id}>
                 {headerGroup.headers.map(column => (
-                  <th {...column.getHeaderProps()}>{column.render('Header')}</th>
+                  <th {...column.getHeaderProps()} key={column.id}>
+                    {column.render('Header')}
+                  </th>
                 ))}
               </tr>
             ))}
@@ -73,9 +84,11 @@ const Table = ({ data, numberOfClusters }) => {
             {page.map(row => {
               prepareRow(row);
               return (
-                <tr {...row.getRowProps()}>
+                <tr {...row.getRowProps()} key={row.id}>
                   {row.cells.map(cell => (
-                    <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                    <td {...cell.getCellProps()} key={cell.column.id}>
+                      {cell.render('Cell')}
+                    </td>
                   ))}
                 </tr>
               );
@@ -97,13 +110,13 @@ const Table = ({ data, numberOfClusters }) => {
           {'>>'}
         </button>
         <span>
-          Pagina{' '}
+          Página{' '}
           <strong>
             {pageIndex + 1} de {pageOptions.length}
           </strong>{' '}
         </span>
         <span>
-          | Ir a la pagina:{' '}
+          | Ir a la página:{' '}
           <input
             type="number"
             defaultValue={pageIndex + 1}
@@ -111,16 +124,16 @@ const Table = ({ data, numberOfClusters }) => {
               const page = e.target.value ? Number(e.target.value) - 1 : 0;
               gotoPage(page);
             }}
-            style={{ width: '100px' }}
+            style={{ width: '50px' }}
           />
         </span>
         <select
           value={pageSize}
           onChange={e => setPageSize(Number(e.target.value))}
         >
-          {[10, 20, 30, 40, 50].map(pageSize => (
-            <option key={pageSize} value={pageSize}>
-              Mostrar {pageSize}
+          {[5, 10, 20].map(size => (
+            <option key={size} value={size}>
+              Mostrar {size}
             </option>
           ))}
         </select>

@@ -39,6 +39,7 @@ def preprocessing(file):
     df = pd.read_csv(file)
 
     selected_columns = ['BALANCE', 'PURCHASES', 'CREDIT_LIMIT', 'PAYMENTS', 'PURCHASES_FREQUENCY', 'MINIMUM_PAYMENTS', 'TENURE']
+    columns_list = df.columns.tolist()
 
     data = df[selected_columns].copy()
     #print('SEPARA DATA')
@@ -50,7 +51,7 @@ def preprocessing(file):
     normalized_data = scaler.fit_transform(data)
     #print('NORMALIZA')
 
-    return normalized_data, selected_columns
+    return normalized_data, columns_list, selected_columns
 
 def pcaOne(normalized_data):
     plt.switch_backend('Agg')

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
 import Image from './Image';
-import Table from './Table'
 
 import fileService from '../services/file'
 
@@ -47,11 +46,6 @@ const GraphOptions = ({list, data, clusters}) => {
       </div>
       <Image
         imageSrc={graph}
-      />
-
-      <Table
-        data={data}
-        numberOfClusters={clusters}
       />
     </div>
   );

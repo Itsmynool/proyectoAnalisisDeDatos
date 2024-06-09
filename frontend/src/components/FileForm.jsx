@@ -2,7 +2,7 @@ import React, { useState, useRef, forwardRef, useImperativeHandle } from 'react'
 
 import ButtonOnClick from "./ButtonOnClick"
 
-const FileForm = forwardRef(({sendFile}, ref) => {
+const FileForm = forwardRef(({sendFile, deleteData}, ref) => {
     const [file, setFile] = useState(null)
     const [isDisabled, setIsDisabled] = useState(false);
 
@@ -18,6 +18,7 @@ const FileForm = forwardRef(({sendFile}, ref) => {
             fileInputRef.current.value = '';
         }
         setFile(null);
+        deleteData()
     }
 
     useImperativeHandle(ref, () => {
