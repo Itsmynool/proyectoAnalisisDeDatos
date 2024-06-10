@@ -29,3 +29,4 @@ Este proyecto tiene como objetivo segmentar a los clientes en grupos homogéneos
 2. cd backend
 3. pip install -r requirements.txt
 4. python app.py
+5. El archivo que valido se encuentra en este mismo repositorio
