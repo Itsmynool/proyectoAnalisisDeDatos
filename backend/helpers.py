@@ -75,14 +75,14 @@ def elbowGraph(data):
     plt.switch_backend('Agg')
     # Generar el gráfico del codo
     sse = []
-    for k in range(1, 11):
-        kmeans = KMeans(n_clusters=k, init='k-means++', max_iter=300, n_init=10, random_state=0)
+    for k in range(1, 6):
+        kmeans = KMeans(n_clusters=k, init='k-means++', max_iter=50, n_init=10, random_state=0)
         kmeans.fit(data)
         sse.append(kmeans.inertia_)
 
     elbow_buffer = BytesIO()
     plt.figure(figsize=(10, 6))
-    plt.plot(range(1, 11), sse, marker='o')
+    plt.plot(range(1, 6), sse, marker='o')
     plt.title('Método del Codo')
     plt.xlabel('Número de clusters')
     plt.ylabel('Inertia')
@@ -96,10 +96,10 @@ def elbowGraph(data):
 def silhouetteScore(normalized_data):
     plt.switch_backend('Agg')
     silhouette_scores = []
-    K = range(2, 11)
+    K = range(2, 6)
 
     for k in K:
-        kmeans = KMeans(n_clusters=k, init='k-means++', max_iter=300, n_init=10, random_state=0)
+        kmeans = KMeans(n_clusters=k, init='k-means++', max_iter=50, n_init=10, random_state=0)
         kmeans.fit(normalized_data)
         score = silhouette_score(normalized_data, kmeans.labels_)
         silhouette_scores.append(score)
