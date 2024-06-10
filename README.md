@@ -16,6 +16,8 @@ Este proyecto tiene como objetivo segmentar a los clientes en grupos homogéneos
 
 - **TENURE:** El tiempo que los clientes han estado usando su tarjeta de crédito, medido en meses. La antigüedad del cliente con la tarjeta de crédito puede influir en su comportamiento.
 
+- **MINIMUM_PAYMENTS:** El monto mínimo que el cliente debe pagar en su tarjeta de crédito cada mes. El pago mínimo es el menor monto que se requiere para mantener la cuenta en buen estado. Los clientes que solo pagan el mínimo cada mes pueden estar gestionando su deuda de manera diferente a aquellos que pagan más del mínimo. Esta información es importante para evaluar el comportamiento de pago del cliente y su capacidad para manejar su deuda.
+
 ## Requisitos
 
 - Python 3.12.0
