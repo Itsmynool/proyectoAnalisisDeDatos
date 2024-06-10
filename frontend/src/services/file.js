@@ -1,5 +1,5 @@
 import axios from 'axios'
-const baseUrl = ''
+const baseUrl = '127.0.0.1:8000/'
 
 const sendFile = (formData) => {
     const request = axios.post(`${baseUrl}/upload`, formData, {
