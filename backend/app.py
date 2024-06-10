@@ -1,42 +1,45 @@
-from flask import Flask, jsonify, request
 from helpers import validate_csv, preprocessing, pcaOne, elbowGraph, silhouetteScore, kmeans, pca_kmeans, generate_graph_image, change_clusters
-from flask_cors import CORS
 
 import pandas as pd
 
-#app = Flask(__name__)
-#CORS(app, resources={r"/*": {"origins": "*"}})
+from flask import Flask, jsonify, request, send_from_directory
 
-app = Flask(__name__)
-CORS(app)
+app = Flask(__name__, static_folder='build/static', template_folder='build')
+
+@app.route('/')
+def serve():
+    return send_from_directory(app.template_folder, 'index.html')
+
+@app.route('/<path:path>', methods=['GET'])
+def serve_static(path):
+    # Check if the requested file is in the static folder
+    if path.startswith('static'):
+        return send_from_directory(app.static_folder, path)
+    # Otherwise, serve the requested file from the build folder
+    return send_from_directory(app.template_folder, path)
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
     uploaded_file = request.files.get('file')
     if uploaded_file:
-        #df = pd.read_csv(uploaded_file)
-        #data = df.to_dict(orient='records')
         is_valid, message = validate_csv(uploaded_file)
         if not is_valid:
             return jsonify({'error': message}), 400
-         
         else:
             try:
                 normalized_data, columsList, columns = preprocessing(uploaded_file)
-                #print('Normaliza')
                 pcaImg = pcaOne(normalized_data)
-                #print('PCA UNO')
                 elbowImg = elbowGraph(normalized_data)
-                #print('Eblow')
                 silhouetteImg, optimalClusters = silhouetteScore(normalized_data)
-                #print('Silhouette')
                 data, clusters, score = kmeans(normalized_data, optimalClusters, uploaded_file, 0)
-                #print('Kmeans')
                 pcaClusterImg = pca_kmeans(normalized_data, clusters)
-                #print('PCA DOS}')
                 columns.sort()
 
-                return jsonify({'pcaImg': pcaImg, 'elbowImg': elbowImg, 'silhouetteImg': silhouetteImg,'optimalClusters': optimalClusters, 'data': data, 'pcaClusterImg': pcaClusterImg, 'columns': columns, 'columsList': columsList, 'score': score}), 200
+                return jsonify({
+                    'pcaImg': pcaImg, 'elbowImg': elbowImg, 'silhouetteImg': silhouetteImg,
+                    'optimalClusters': optimalClusters, 'data': data, 'pcaClusterImg': pcaClusterImg,
+                    'columns': columns, 'columsList': columsList, 'score': score
+                }), 200
             
             except pd.errors.ParserError:
                 return jsonify({"error": "Error al analizar el archivo CSV"}), 400
@@ -54,15 +57,7 @@ def generate_graph():
         variableX = data.get('variableX')
         variableY = data.get('variableY')
 
-        #print('X: ', variableX)
-        #print('Y: ', variableY)
-        #print('COLUMNS: ', columns)
-
-        # Convert the array to a DataFrame
         df = pd.DataFrame(array_data)
-
-        #print(df.head())
-
         graph_img = generate_graph_image(df, variableX, variableY)
 
         return jsonify({"graph_img": graph_img}), 200
@@ -73,20 +68,11 @@ def generate_graph():
 @app.route('/change_optimal_clusters', methods=['POST'])
 def change_optimal_clusters():
     try:
-        print('HOLA')
         data = request.json
         array_data = data.get('data')
         clusters = data.get('clusters')
 
-        print('array_data: ', array_data[0])
-        print('clusters: ', clusters)
-
-        # Convert the array to a DataFrame
         df = pd.DataFrame(array_data)
-        print('df\n: ', df.head())
-
-        #print(df.head())
-
         data, score, pcaClusterImg = change_clusters(df, clusters)
 
         return jsonify({"data": data, "score": score, "pcaClusterImg": pcaClusterImg}), 200

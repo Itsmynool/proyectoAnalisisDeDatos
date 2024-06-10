@@ -43,7 +43,7 @@ function App() {
       const formData = new FormData();
       formData.append('file', file);
       const response = await fileService.sendFile(formData)
-      console.log(response);
+      //console.log(response);
       saveData(response)
     } catch (exception) {
       showMessage(null, exception.response.data.error)
