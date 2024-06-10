@@ -80,5 +80,8 @@ def change_optimal_clusters():
     except:
         return jsonify({'error': 'Algo ha ocurrido'}), 400
 
+#if __name__ == '__main__':
+#    app.run(debug=True)
+
 if __name__ == '__main__':
-    app.run()
+    app.run() 
