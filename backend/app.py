@@ -4,8 +4,11 @@ from flask_cors import CORS
 
 import pandas as pd
 
+#app = Flask(__name__)
+#CORS(app, resources={r"/*": {"origins": "*"}})
+
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "*"}})
+CORS(app)
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
@@ -92,4 +95,4 @@ def change_optimal_clusters():
         return jsonify({'error': 'Algo ha ocurrido'}), 400
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()

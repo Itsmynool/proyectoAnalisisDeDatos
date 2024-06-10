@@ -29,6 +29,8 @@ const Clustering = forwardRef((props, ref) => {
         setGraphOptions(null)
         setTableGuide(null)
         setScore(null)
+
+        window.localStorage.clear()
     }
 
     useImperativeHandle(ref, () => {
