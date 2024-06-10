@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request
-from helpers import validate_csv, preprocessing, pcaOne, elbowGraph, silhouetteScore, kmeans, pca_kmeans, generate_graph_image
+from helpers import validate_csv, preprocessing, pcaOne, elbowGraph, silhouetteScore, kmeans, pca_kmeans, generate_graph_image, change_clusters
 from flask_cors import CORS
 
 import pandas as pd
@@ -27,13 +27,13 @@ def upload_file():
                 #print('Eblow')
                 silhouetteImg, optimalClusters = silhouetteScore(normalized_data)
                 #print('Silhouette')
-                data, clusters = kmeans(normalized_data, optimalClusters, uploaded_file)
+                data, clusters, score = kmeans(normalized_data, optimalClusters, uploaded_file, 0)
                 #print('Kmeans')
                 pcaClusterImg = pca_kmeans(normalized_data, clusters)
                 #print('PCA DOS}')
                 columns.sort()
 
-                return jsonify({'pcaImg': pcaImg, 'elbowImg': elbowImg, 'silhouetteImg': silhouetteImg,'optimalClusters': optimalClusters, 'data': data, 'pcaClusterImg': pcaClusterImg, 'columns': columns, 'columsList': columsList}), 200
+                return jsonify({'pcaImg': pcaImg, 'elbowImg': elbowImg, 'silhouetteImg': silhouetteImg,'optimalClusters': optimalClusters, 'data': data, 'pcaClusterImg': pcaClusterImg, 'columns': columns, 'columsList': columsList, 'score': score}), 200
             
             except pd.errors.ParserError:
                 return jsonify({"error": "Error al analizar el archivo CSV"}), 400
@@ -67,7 +67,29 @@ def generate_graph():
     except:
         return jsonify({'error': 'Algo ha ocurrido'}), 400
 
+@app.route('/change_optimal_clusters', methods=['POST'])
+def change_optimal_clusters():
+    try:
+        print('HOLA')
+        data = request.json
+        array_data = data.get('data')
+        clusters = data.get('clusters')
 
+        print('array_data: ', array_data[0])
+        print('clusters: ', clusters)
+
+        # Convert the array to a DataFrame
+        df = pd.DataFrame(array_data)
+        print('df\n: ', df.head())
+
+        #print(df.head())
+
+        data, score, pcaClusterImg = change_clusters(df, clusters)
+
+        return jsonify({"data": data, "score": score, "pcaClusterImg": pcaClusterImg}), 200
+
+    except:
+        return jsonify({'error': 'Algo ha ocurrido'}), 400
 
 if __name__ == '__main__':
     app.run(debug=True)

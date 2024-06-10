@@ -119,10 +119,11 @@ def silhouetteScore(normalized_data):
 
     return silhouette_img, optimal_clusters
 
-def kmeans(normalized_data, optimal_clusters, df):
-    df.seek(0) 
-    df = pd.read_csv(df)
-    #print('Lee DF')
+def kmeans(normalized_data, optimal_clusters, df, numero):
+    if numero == 0:
+        df.seek(0) 
+        df = pd.read_csv(df)
+        #print('Lee DF')
 
     kmeans = KMeans(n_clusters=optimal_clusters, init='k-means++', max_iter=300, n_init=10, random_state=0)
     #print('KMEANS')
@@ -134,7 +135,9 @@ def kmeans(normalized_data, optimal_clusters, df):
     df = dataframeToDictionary(df)
     #print('Dictionary')
 
-    return df, clusters
+    score = silhouette_score(normalized_data, kmeans.fit_predict(normalized_data))
+
+    return df, clusters, score
 
 def pca_kmeans(normalized_data, clusters):
     plt.switch_backend('Agg')
@@ -158,25 +161,42 @@ def generate_graph_image(df, variable1, variable2):
     plt.switch_backend('Agg')
     graph = BytesIO()
     
+    # Crear la figura y los ejes con el color de fondo deseado
+    fig, ax = plt.subplots(facecolor='#282c34')
+    
     # Crear el gráfico de dispersión
-    scatter = plt.scatter(df[variable1], df[variable2], c=df['Cluster'], cmap='coolwarm', alpha=1, s=100, edgecolor='black')
-    plt.xlabel(variable1)
-    plt.ylabel(variable2)
-    plt.title('Gráfico de dispersión')
+    scatter = ax.scatter(df[variable1], df[variable2], c=df['Cluster'], cmap='coolwarm', alpha=1, s=100, edgecolor='black')
+    ax.set_xlabel(variable1, color='white')
+    ax.set_ylabel(variable2, color='white')
+    ax.set_title('Gráfico de dispersión', color='white')
+    
+    # Establecer colores de los ejes
+    ax.spines['bottom'].set_color('white')
+    ax.spines['left'].set_color('white')
+    ax.spines['top'].set_color('white')
+    ax.spines['right'].set_color('white')
+    
+    # Establecer colores de las etiquetas de los ejes
+    ax.tick_params(axis='x', colors='white')
+    ax.tick_params(axis='y', colors='white')
     
     # Obtener los límites del eje x e y
-    xlim = plt.gca().get_xlim()
-    ylim = plt.gca().get_ylim()
+    xlim = ax.get_xlim()
+    ylim = ax.get_ylim()
     
     # Obtener los colores de los clusters
     cluster_colors = [scatter.cmap(scatter.norm(cluster)) for cluster in df['Cluster'].unique()]
     
     # Agregar la leyenda de clusters en la esquina superior derecha
     legend_elements = [plt.Line2D([0], [0], marker='o', color='w', label=f'Cluster {cluster}', markersize=10, markerfacecolor=color) for cluster, color in zip(df['Cluster'].unique(), cluster_colors)]
-    plt.legend(handles=legend_elements, loc='upper right')
+    legend = ax.legend(handles=legend_elements, loc='upper right', facecolor='#282c34', edgecolor='white', fontsize='large', framealpha=1)
+    
+    # Cambiar el color del texto de la leyenda
+    for text in legend.get_texts():
+        text.set_color('white')
 
     # Guardar el gráfico en el buffer de bytes
-    plt.savefig(graph, format='png')
+    plt.savefig(graph, format='png', facecolor='#282c34')
     plt.close()
 
     # Convertir el buffer de bytes en una cadena base64
@@ -184,3 +204,16 @@ def generate_graph_image(df, variable1, variable2):
     graph_img = base64.b64encode(graph.getvalue()).decode('utf-8')
 
     return graph_img
+
+def change_clusters(df, optimalclusters):
+    selected_columns = ['BALANCE', 'PURCHASES', 'CREDIT_LIMIT', 'PAYMENTS', 'PURCHASES_FREQUENCY', 'MINIMUM_PAYMENTS', 'TENURE']
+    data = df[selected_columns].copy()
+    data.fillna(data.mean(), inplace=True)
+
+    scaler = StandardScaler()
+    normalized_data = scaler.fit_transform(data)
+    
+    df, clusters, score = kmeans(normalized_data, optimalclusters, df, 1)
+    pca_two = pca_kmeans(normalized_data, optimalclusters)
+
+    return df, score, pca_two

@@ -19,6 +19,14 @@ const generateGraph = (data, variableX, variableY) => {
     return request.then(response => response.data)
 }
 
-const fileService = { sendFile, generateGraph }
+const changeOptimalClusters = (data, clusters) => {
+    const request = axios.post(`${baseUrl}/change_optimal_clusters`, {
+        data: data,
+        clusters: clusters
+    });
+    return request.then(response => response.data)
+}
+
+const fileService = { sendFile, generateGraph, changeOptimalClusters }
 
 export default fileService

@@ -32,6 +32,7 @@ function App() {
     clusteringRef.current.setPcaClusterImg(response.pcaClusterImg)
     clusteringRef.current.setGraphOptions(response.columns)
     clusteringRef.current.setTableGuide(response.columsList)
+    clusteringRef.current.setScore(response.score)
 
     clusteringRef.current.setAnalysisCompleted(true)
   }
@@ -42,7 +43,7 @@ function App() {
       const formData = new FormData();
       formData.append('file', file);
       const response = await fileService.sendFile(formData)
-      //console.log(response.columsList);
+      console.log(response);
       saveData(response)
     } catch (exception) {
       showMessage(null, exception.response.data.error)
@@ -58,8 +59,8 @@ function App() {
   }
 
   return (
-    <div>
-      <h1>Clustering Tarjetas de credito</h1>
+    <div className='App'>
+      <h1 className='pricipal-title' >Clustering Tarjetas de credito</h1>
       <Notification message={information.error} type='Error' />
       <Notification message={information.success} type='Success' />
 

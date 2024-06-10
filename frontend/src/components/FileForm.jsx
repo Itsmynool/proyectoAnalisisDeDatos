@@ -1,6 +1,9 @@
 import React, { useState, useRef, forwardRef, useImperativeHandle } from 'react';
 
 import ButtonOnClick from "./ButtonOnClick"
+import Loading from "./Loading"
+
+import styles from "../styles/FileInput.module.css"
 
 const FileForm = forwardRef(({sendFile, deleteData}, ref) => {
     const [file, setFile] = useState(null)
@@ -31,21 +34,21 @@ const FileForm = forwardRef(({sendFile, deleteData}, ref) => {
     return (
         <div>
             {!file && (
-                <div>
-                    <p>Por favor, selecciona un archivo CSV</p> 
-                    <div><input type="file" ref={fileInputRef} onChange={fileOnChange} /></div>
+                <div className={styles.container}>
+                    <p className={styles.label}>Por favor, selecciona un archivo CSV</p>
+                    <div className={styles.inputContainer}>
+                    <input type="file" ref={fileInputRef} onChange={fileOnChange} />
+                    </div>
                 </div>
             )}
             {file && (
                 <div>
-                    <p> {file.name} </p>
+                    <p> <b>Archivo: </b> {file.name} </p>
                     <ButtonOnClick text='Eliminar' onClick={removeFile} disabled={isDisabled} />
                 </div>
             )}
             {isDisabled && (
-                <div>
-                    Cargando...
-                </div>
+                <Loading/>
             )}
         </div>
     )

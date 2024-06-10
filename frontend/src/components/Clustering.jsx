@@ -16,6 +16,7 @@ const Clustering = forwardRef((props, ref) => {
     const [pcaClusterImg, setPcaClusterImg] = useState(null)
     const [graphOptions, setGraphOptions] = useState(null)
     const [tableGuide, setTableGuide] = useState(null)
+    const [score, setScore] = useState(null)
 
     const deleteData = () => {
         setData(null)
@@ -27,6 +28,7 @@ const Clustering = forwardRef((props, ref) => {
         setPcaClusterImg(null)
         setGraphOptions(null)
         setTableGuide(null)
+        setScore(null)
     }
 
     useImperativeHandle(ref, () => {
@@ -40,7 +42,8 @@ const Clustering = forwardRef((props, ref) => {
             setPcaClusterImg,
             setGraphOptions,
             deleteData,
-            setTableGuide
+            setTableGuide,
+            setScore
         }
     })
 
@@ -57,7 +60,12 @@ const Clustering = forwardRef((props, ref) => {
                     image2={elbowImg}
                 />
 
-                Numero de clusters: {optimalClusters}
+                <div>
+                    <p><b>Numero de clusters: </b>{optimalClusters}</p>
+                </div>
+                <div>
+                    <p><b>Score: </b>{score}</p>
+                </div>
 
                 <Image
                     imageSrc={pcaClusterImg}

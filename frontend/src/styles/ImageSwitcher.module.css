@@ -1,0 +1,19 @@
+.container {
+  display: flex;
+  align-items: center;
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-right: 20px;
+}
+
+.optionLabel {
+  margin-bottom: 10px;
+}
+
+.imageContainer {
+  flex: 1;
+}

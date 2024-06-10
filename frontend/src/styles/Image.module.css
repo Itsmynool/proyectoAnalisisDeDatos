@@ -1,0 +1,16 @@
+.image-container {
+    background-color: #434343;
+    margin: 20px;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .image {
+    max-width: 100%;    
+    height: auto;
+    width: 650px;
+    height: 400px;
+  }
+  

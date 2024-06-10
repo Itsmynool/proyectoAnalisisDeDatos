@@ -1,9 +1,11 @@
-const ButtonOnClick = ({text, onClick, disabled}) => {
-    return (
-        <button onClick={onClick} disabled={disabled} >
-            {text}
-        </button>
-    )
-}
+import styles from '../styles/ButtonOnClick.module.css';
 
-export default ButtonOnClick
+const ButtonOnClick = ({ text, onClick, disabled }) => {
+  return (
+    <button className={styles.button} onClick={onClick} disabled={disabled}>
+      {text}
+    </button>
+  );
+};
+
+export default ButtonOnClick;

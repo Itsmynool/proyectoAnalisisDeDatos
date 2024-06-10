@@ -5,6 +5,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #20242e;
 }
 
 code {
@@ -12,8 +13,26 @@ code {
     monospace;
 }
 
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: #282c34;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #575757;
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #3e3e3e;
+}
+
 .notification {
-  background: lightgrey;
+  background: rgb(0, 0, 0);
   font-size: 20px;
   border-style: solid;
   border-radius: 5px;

@@ -1,5 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useTable, usePagination } from 'react-table';
+import { IoIosArrowBack, IoIosArrowForward } from 'react-icons/io';
+
+import styles from '../styles/Table.module.css';
 
 const Table = ({ data, numberOfClusters, tableGuide }) => {
   const [selectedCluster, setSelectedCluster] = useState(0);
@@ -12,17 +15,10 @@ const Table = ({ data, numberOfClusters, tableGuide }) => {
   const columns = useMemo(() => {
     if (!data || data.length === 0) return [];
 
-    // Map tableGuide to columns, excluding 'Cluster'
     const tableColumns = tableGuide.map(key => ({
       Header: key,
       accessor: key,
     }));
-
-    // Optional: To include the Cluster column uncomment the lines below
-    // tableColumns.push({
-    //   Header: 'Cluster',
-    //   accessor: 'Cluster',
-    // });
 
     return tableColumns;
   }, [data, tableGuide]);
@@ -52,8 +48,8 @@ const Table = ({ data, numberOfClusters, tableGuide }) => {
   );
 
   return (
-    <div>
-      <div>
+    <div className={styles.tableContainer}>
+      <div className={styles.clusterSelect}>
         <label htmlFor="cluster-select">Selecciona el Cluster: </label>
         <select
           id="cluster-select"
@@ -67,8 +63,8 @@ const Table = ({ data, numberOfClusters, tableGuide }) => {
           ))}
         </select>
       </div>
-      <div style={{ overflowX: 'auto', maxWidth: '100%' }}>
-        <table {...getTableProps()} style={{ width: '100%' }}>
+      <div className={styles.tableWrapper}>
+        <table {...getTableProps()} className={styles.table}>
           <thead>
             {headerGroups.map(headerGroup => (
               <tr {...headerGroup.getHeaderGroupProps()} key={headerGroup.id}>
@@ -96,27 +92,27 @@ const Table = ({ data, numberOfClusters, tableGuide }) => {
           </tbody>
         </table>
       </div>
-      <div>
+      <div className={styles.pagination}>
         <button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
-          {'<<'}
+          <IoIosArrowBack />
         </button>
         <button onClick={() => previousPage()} disabled={!canPreviousPage}>
-          {'<'}
+          <IoIosArrowBack />
         </button>
         <button onClick={() => nextPage()} disabled={!canNextPage}>
-          {'>'}
+          <IoIosArrowForward />
         </button>
         <button onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage}>
-          {'>>'}
+          <IoIosArrowForward />
         </button>
-        <span>
+        <span className={styles.pageText}>
           Página{' '}
           <strong>
             {pageIndex + 1} de {pageOptions.length}
           </strong>{' '}
         </span>
-        <span>
-          | Ir a la página:{' '}
+        <span className={styles.gotoPage}>
+          Ir a la página:{' '}
           <input
             type="number"
             defaultValue={pageIndex + 1}
@@ -124,19 +120,23 @@ const Table = ({ data, numberOfClusters, tableGuide }) => {
               const page = e.target.value ? Number(e.target.value) - 1 : 0;
               gotoPage(page);
             }}
-            style={{ width: '50px' }}
+            className={styles.gotoPageInput}
           />
         </span>
-        <select
-          value={pageSize}
-          onChange={e => setPageSize(Number(e.target.value))}
-        >
-          {[5, 10, 20].map(size => (
-            <option key={size} value={size}>
-              Mostrar {size}
-            </option>
-          ))}
-        </select>
+        <span className={styles.pageSize}>
+          Mostrar:
+          <select
+            value={pageSize}
+            onChange={e => setPageSize(Number(e.target.value))}
+            className={styles.pageSizeSelect}
+          >
+            {[5, 10, 15].map(size => (
+              <option key={size} value={size}>
+                {size}
+              </option>
+            ))}
+          </select>
+        </span>
       </div>
     </div>
   );
