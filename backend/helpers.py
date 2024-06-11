@@ -14,7 +14,7 @@ import seaborn as sns
 def validate_csv(file):
     try:
         df = pd.read_csv(file)
-        required_columns = ['BALANCE', 'PURCHASES', 'CREDIT_LIMIT', 'PAYMENTS', 'PURCHASES_FREQUENCY', 'MINIMUM_PAYMENTS', 'TENURE']
+        required_columns = ['BALANCE', 'PURCHASES', 'CREDIT_LIMIT', 'PAYMENTS', 'PURCHASES_FREQUENCY', 'MINIMUM_PAYMENTS']
 
         if not set(required_columns).issubset(df.columns):
             return False, 'El archivo CSV no contiene las columnas requeridas'
@@ -38,7 +38,7 @@ def preprocessing(file):
     file.seek(0) 
     df = pd.read_csv(file)
 
-    selected_columns = ['BALANCE', 'PURCHASES', 'CREDIT_LIMIT', 'PAYMENTS', 'PURCHASES_FREQUENCY', 'MINIMUM_PAYMENTS', 'TENURE']
+    selected_columns = ['BALANCE', 'PURCHASES', 'CREDIT_LIMIT', 'PAYMENTS', 'PURCHASES_FREQUENCY', 'MINIMUM_PAYMENTS']
     columns_list = df.columns.tolist()
 
     data = df[selected_columns].copy()
