@@ -26,7 +26,7 @@ Este proyecto tiene como objetivo segmentar a los clientes en grupos homogéneos
 
 1. Clona este repositorio en tu máquina local:
    ```bash
-   git clone https://github.com/tu_usuario/tu_proyecto.git](https://github.com/Itsmynool/proyectoAnalisisDeDatos
+   git clone https://github.com/Itsmynool/proyectoAnalisisDeDatos
 
 2. cd backend
 3. pip install -r requirements.txt
